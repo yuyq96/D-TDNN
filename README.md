@@ -25,7 +25,7 @@ We provide the [pretrained models](https://github.com/yuyq96/D-TDNN/releases/tag
 
 - Download the pretrained [D-TDNN](https://github.com/yuyq96/D-TDNN/releases/download/models/dtdnn.pth) model and run:
 ```
-python main.py --root $datadir/test_no_sil --model D-TDNN --checkpoint model_zoo/dtdnn.pth --device cuda
+python main.py --root $datadir/test_no_sil --model D-TDNN --checkpoint dtdnn.pth --device cuda
 ```
 
 ## Evaluation
