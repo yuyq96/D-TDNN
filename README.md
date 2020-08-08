@@ -13,14 +13,17 @@ We provide the [pretrained models](https://github.com/yuyq96/D-TDNN/releases/tag
 
 ## Usage
 
-Data preparation
-* Install [Kaldi](https://github.com/kaldi-asr/kaldi) toolkit.
-* Download [VoxCeleb1 test set](http://www.robots.ox.ac.uk/~vgg/data/voxceleb/vox1.html) and unzip it.
-* Place `prepare_voxceleb1_test.sh` under `$kaldi_root/egs/voxceleb/v2` and change the `$datadir` and `$voxceleb1_root` in it.
-* Run `chmod +x prepare_voxceleb1_test.sh && ./prepare_voxceleb1_test.sh` to generate acoustic features ([30-Dim MFCCs](https://github.com/kaldi-asr/kaldi/blob/master/egs/voxceleb/v2/conf/mfcc.conf)).
-* Replace the `trials` under `$datadir/test_no_sil` with the [clean version](https://github.com/yuyq96/D-TDNN/releases/download/trials/trials).
+#### Data preparation
 
-Test
+- Install [Kaldi](https://github.com/kaldi-asr/kaldi) toolkit.
+- Download [VoxCeleb1](http://www.robots.ox.ac.uk/~vgg/data/voxceleb/vox1.html) test set and unzip it.
+- Place `prepare_voxceleb1_test.sh` under `$kaldi_root/egs/voxceleb/v2` and change the `$datadir` and `$voxceleb1_root` in it.
+- Run `chmod +x prepare_voxceleb1_test.sh && ./prepare_voxceleb1_test.sh` to generate [30-dim MFCCs](https://github.com/kaldi-asr/kaldi/blob/master/egs/voxceleb/v2/conf/mfcc.conf).
+- Replace the `trials` under `$datadir/test_no_sil` with the [clean version](https://github.com/yuyq96/D-TDNN/releases/download/trials/trials).
+
+#### Test
+
+- Download the pretrained [D-TDNN](https://github.com/yuyq96/D-TDNN/releases/download/models/dtdnn.pth) model and run:
 ```
 python main.py --root $datadir/test_no_sil --model D-TDNN --checkpoint model_zoo/dtdnn.pth --device cuda
 ```
