@@ -2,7 +2,7 @@ from collections import OrderedDict
 
 from torch import nn
 
-from .layers import TDNNLayer, DenseTDNNBlock, TransitLayer, DenseLayer, StatsPool
+from .layers import TimeDelay, TDNNLayer, DenseTDNNBlock, TransitLayer, DenseLayer, StatsPool
 
 
 class DTDNN(nn.Module):
@@ -40,7 +40,7 @@ class DTDNN(nn.Module):
             self.classifier = nn.Linear(embedding_size, num_classes)
 
         for m in self.modules():
-            if isinstance(m, knn.TimeDelay):
+            if isinstance(m, TimeDelay):
                 nn.init.kaiming_normal_(m.weight.data)
             elif isinstance(m, nn.Linear):
                 nn.init.kaiming_normal_(m.weight.data)
