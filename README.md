@@ -5,9 +5,9 @@ PyTorch implementation of Densely Connected Time Delay Neural Network (D-TDNN) i
 We provide the [pretrained models](https://github.com/yuyq96/D-TDNN/releases/tag/models) which can be used in many tasks such as:
 
 - Speaker Verification
-- Speaker Adaption for Speech Recognition
 - Speaker-Dependent Speech Separation
 - Multi-Speaker Text-to-Speech
+- Voice Conversion
 
 ![D-TDNN & D-TDNN-SS](figure/D_TDNN.png)
 
