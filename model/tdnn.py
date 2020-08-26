@@ -6,7 +6,7 @@ from .layers import TDNNLayer, DenseLayer, StatsPool
 
 
 class TDNN(nn.Module):
-    def __init__(self, feat_dim=30, embedding_size=512,
+    def __init__(self, feat_dim=30, embedding_size=512, num_classes=None,
                  config_str='batchnorm-relu'):
         super(TDNN, self).__init__()
 
@@ -22,6 +22,19 @@ class TDNN(nn.Module):
             ('stats', StatsPool()),
             ('affine', nn.Linear(3000, embedding_size))
         ]))
+        self.nonlinear = get_nonlinear(config_str, embedding_size, drop_rate)
+        self.dense = DenseLayer(embedding_size, embedding_size, config_str=config_str)
+        if num_classes is not None:
+            self.classifier = nn.Linear(embedding_size, num_classes)
+
+        for m in self.modules():
+            if isinstance(m, nn.Linear):
+                nn.init.kaiming_normal_(m.weight.data)
+                nn.init.zeros_(m.bias)
 
     def forward(self, x):
-        return self.xvector(x)
+        x = self.xvector(x)
+        if self.training:
+            x = self.dense(self.nonlinear(x))
+            x = self.classifier(x)
+        return x

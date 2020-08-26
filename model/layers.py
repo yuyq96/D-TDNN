@@ -22,21 +22,10 @@ def get_nonlinear(config_str, channels):
     return nonlinear
 
 
-def statistics_pooling(x, order=2, dim=-1, keepdim=False, unbiased=True, eps=1e-2):
-    stats = []
+def statistics_pooling(x, dim=-1, keepdim=False, unbiased=True, eps=1e-2):
     mean = x.mean(dim=dim)
-    stats.append(mean)
-    if order >= 2:
-        std = x.std(dim=dim, unbiased=unbiased)
-        stats.append(std)
-    if order >= 3:
-        x = (x - mean.unsqueeze(-1)) / std.clamp(min=eps).unsqueeze(-1)
-        skewness = x.pow(3).mean(-1)
-        stats.append(skewness)
-        if order >= 4:
-            kurtosis = x.pow(4).mean(-1)
-            stats.append(kurtosis)
-    stats = torch.cat(stats, dim=-1)
+    std = x.std(dim=dim, unbiased=unbiased)
+    stats = torch.cat([mean, std], dim=-1)
     if keepdim:
         stats = stats.unsqueeze(dim=dim)
     return stats
@@ -44,12 +33,8 @@ def statistics_pooling(x, order=2, dim=-1, keepdim=False, unbiased=True, eps=1e-
 
 class StatsPool(nn.Module):
 
-    def __init__(self, order=2):
-        super(StatsPool, self).__init__()
-        self.order = order
-
     def forward(self, x):
-        return statistics_pooling(x, order=self.order)
+        return statistics_pooling(x)
 
 
 class TimeDelay(nn.Module):
@@ -104,18 +89,25 @@ class TDNNLayer(nn.Module):
 class DenseTDNNLayer(nn.Module):
 
     def __init__(self, in_channels, out_channels, bn_channels, kernel_size, stride=1,
-                 dilation=1, bias=False, config_str='batchnorm-relu'):
+                 dilation=1, bias=False, config_str='batchnorm-relu', memory_efficient=False):
         super(DenseTDNNLayer, self).__init__()
         assert kernel_size % 2 == 1, 'Expect equal paddings, but got even kernel size ({})'.format(kernel_size)
         padding = (kernel_size - 1) // 2 * dilation
+        self.memory_efficient = memory_efficient
         self.nonlinear1 = get_nonlinear(config_str, in_channels)
         self.linear1 = nn.Linear(in_channels, bn_channels, bias=False)
         self.nonlinear2 = get_nonlinear(config_str, bn_channels)
         self.linear2 = TimeDelay(bn_channels, out_channels, kernel_size, stride=stride,
                                  padding=padding, dilation=dilation, bias=bias)
 
+    def bn_function(self, x):
+        return self.linear1(self.nonlinear1(x).transpose(1, 2)).transpose(1, 2)
+
     def forward(self, x):
-        x = self.linear1(self.nonlinear1(x).transpose(1, 2)).transpose(1, 2)
+        if self.training and self.memory_efficient:
+            x = cp.checkpoint(self.bn_function, x)
+        else:
+            x = self.bn_function(x)
         x = self.linear2(self.nonlinear2(x))
         return x
 
@@ -123,7 +115,7 @@ class DenseTDNNLayer(nn.Module):
 class DenseTDNNBlock(nn.ModuleList):
 
     def __init__(self, num_layers, in_channels, out_channels, bn_channels, kernel_size,
-                 stride=1, dilation=1, bias=False, config_str='batchnorm-relu'):
+                 stride=1, dilation=1, bias=False, config_str='batchnorm-relu', memory_efficient=False):
         super(DenseTDNNBlock, self).__init__()
         for i in range(num_layers):
             layer = DenseTDNNLayer(
@@ -134,7 +126,8 @@ class DenseTDNNBlock(nn.ModuleList):
                 stride=stride,
                 dilation=dilation,
                 bias=bias,
-                config_str=config_str
+                config_str=config_str,
+                memory_efficient=memory_efficient
             )
             self.add_module('tdnnd%d' % (i + 1), layer)
 

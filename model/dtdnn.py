@@ -7,9 +7,9 @@ from .layers import TDNNLayer, DenseTDNNBlock, TransitLayer, DenseLayer, StatsPo
 
 class DTDNN(nn.Module):
 
-    def __init__(self, feat_dim=30, embedding_size=512,
+    def __init__(self, feat_dim=30, embedding_size=512, num_classes=None,
                  growth_rate=64, bn_size=2, init_channels=128,
-                 config_str='batchnorm-relu'):
+                 config_str='batchnorm-relu', memory_efficient=True):
         super(DTDNN, self).__init__()
 
         self.xvector = nn.Sequential(OrderedDict([
@@ -25,7 +25,8 @@ class DTDNN(nn.Module):
                 bn_channels=bn_size * growth_rate,
                 kernel_size=kernel_size,
                 dilation=dilation,
-                config_str=config_str
+                config_str=config_str,
+                memory_efficient=memory_efficient
             )
             self.xvector.add_module('block%d' % (i + 1), block)
             channels = channels + num_layers * growth_rate
@@ -35,6 +36,19 @@ class DTDNN(nn.Module):
             channels //= 2
         self.xvector.add_module('stats', StatsPool())
         self.xvector.add_module('dense', DenseLayer(channels * 2, embedding_size, config_str='batchnorm_'))
+        if num_classes is not None:
+            self.classifier = nn.Linear(embedding_size, num_classes)
+
+        for m in self.modules():
+            if isinstance(m, knn.TimeDelay):
+                nn.init.kaiming_normal_(m.weight.data)
+            elif isinstance(m, nn.Linear):
+                nn.init.kaiming_normal_(m.weight.data)
+                if m.bias is not None:
+                    nn.init.zeros_(m.bias)
 
     def forward(self, x):
-        return self.xvector(x)
+        x = self.xvector(x)
+        if self.training:
+            x = self.classifier(x)
+        return x

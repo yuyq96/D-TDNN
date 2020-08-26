@@ -33,7 +33,7 @@ def load_model():
     return model
 
 
-def test():
+def evaluate():
     model = load_model()
     model.eval()
 
@@ -45,8 +45,8 @@ def test():
     for data, utt in tqdm(loader):
         with torch.no_grad():
             data = data.to(device)
-            emb = model(data)
-            utt2emb[utt[0]] = emb[0].cpu().numpy()
+            emb = model(data)[0].cpu().numpy()
+            utt2emb[utt[0]] = emb
 
     with open(os.path.join(args.root, 'trials'), 'r') as f:
         scores = []
@@ -69,4 +69,4 @@ def test():
 if __name__ == '__main__':
     args = parser.parse_args()
     device = torch.device(args.device)
-    test()
+    evaluate()
