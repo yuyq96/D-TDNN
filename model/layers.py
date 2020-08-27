@@ -2,6 +2,7 @@ import math
 
 import torch
 import torch.nn.functional as F
+import torch.utils.checkpoint as cp
 from torch import nn
 from torch.nn.modules.utils import _single, _pair
 
