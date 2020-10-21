@@ -13,20 +13,21 @@ We provide the [pretrained models](https://github.com/yuyq96/D-TDNN/releases/tag
 
 ## Usage
 
+This version (kaldifeat branch) adopts [KaldiFeat](https://github.com/yuyq/kaldifeat) for generating acoustic features on the fly.
+
 #### Data preparation
 
-- Install [Kaldi](https://github.com/kaldi-asr/kaldi) toolkit.
-- Download [VoxCeleb1](http://www.robots.ox.ac.uk/~vgg/data/voxceleb/vox1.html) test set and unzip it.
-- Place `prepare_voxceleb1_test.sh` under `$kaldi_root/egs/voxceleb/v2` and change the `$datadir` and `$voxceleb1_root` in it.
-- Run `chmod +x prepare_voxceleb1_test.sh && ./prepare_voxceleb1_test.sh` to generate [30-dim MFCCs](https://github.com/kaldi-asr/kaldi/blob/master/egs/voxceleb/v2/conf/mfcc.conf).
-- Place the [`trials`](https://github.com/yuyq96/D-TDNN/releases/download/trials/trials) under `$datadir/test_no_sil`.
+- Prepare `wav.scp` and place it under `$data_dir`. The format of each line is `'$label $path'`.
+- Place the [`trials`](https://github.com/yuyq96/D-TDNN/releases/download/trials/trials) under `$datadir`.
 
 #### Test
 
+- Clone [KaldiFeat](https://github.com/yuyq/kaldifeat) toolkit.
 - Download the pretrained [D-TDNN](https://github.com/yuyq96/D-TDNN/releases/download/models/dtdnn.pth) model and run:
 ```
-python evaluate.py --root $datadir/test_no_sil --model D-TDNN --checkpoint dtdnn.pth --device cuda
+python evaluate.py --root $datadir --model D-TDNN --checkpoint dtdnn.pth --device cuda
 ```
+- Note: Use a larger number of dataloaders (workers) to accelerate acoustic feature generation.
 
 ## Evaluation
 

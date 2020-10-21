@@ -39,7 +39,7 @@ def evaluate():
 
     transform = Transpose2D()
     dataset = KaldiFeatDataset(root=args.root, transform=transform)
-    loader = DataLoader(dataset, batch_size=1, shuffle=False, num_workers=1, pin_memory=args.pin_memory)
+    loader = DataLoader(dataset, batch_size=1, shuffle=False, num_workers=16, pin_memory=args.pin_memory)
 
     utt2emb = {}
     for data, utt in tqdm(loader):
