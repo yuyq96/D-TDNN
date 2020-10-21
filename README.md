@@ -15,11 +15,13 @@ We provide the [pretrained models](https://github.com/yuyq96/D-TDNN/releases/tag
 
 #### Data preparation
 
-- Install [Kaldi](https://github.com/kaldi-asr/kaldi) toolkit.
+You can either use [Kaldi](https://github.com/kaldi-asr/kaldi) toolkit:
 - Download [VoxCeleb1](http://www.robots.ox.ac.uk/~vgg/data/voxceleb/vox1.html) test set and unzip it.
 - Place `prepare_voxceleb1_test.sh` under `$kaldi_root/egs/voxceleb/v2` and change the `$datadir` and `$voxceleb1_root` in it.
 - Run `chmod +x prepare_voxceleb1_test.sh && ./prepare_voxceleb1_test.sh` to generate [30-dim MFCCs](https://github.com/kaldi-asr/kaldi/blob/master/egs/voxceleb/v2/conf/mfcc.conf).
 - Place the [`trials`](https://github.com/yuyq96/D-TDNN/releases/download/trials/trials) under `$datadir/test_no_sil`.
+
+Or checkout the [kaldifeat](https://github.com/yuyq96/D-TDNN/tree/kaldifeat) branch if you do not want to install Kaldi.
 
 #### Test
 
