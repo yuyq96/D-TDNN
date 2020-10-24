@@ -32,10 +32,28 @@ def statistics_pooling(x, dim=-1, keepdim=False, unbiased=True, eps=1e-2):
     return stats
 
 
+def high_order_statistics_pooling(x, dim=-1, keepdim=False, unbiased=True, eps=1e-2):
+    mean = x.mean(dim=dim)
+    std = x.std(dim=dim, unbiased=unbiased)
+    norm = (x - mean.unsqueeze(dim=dim)) / std.clamp(min=eps).unsqueeze(dim=dim)
+    skewness = norm.pow(3).mean(dim=dim)
+    kurtosis = norm.pow(4).mean(dim=dim)
+    stats = torch.cat([mean, std, skewness, kurtosis], dim=-1)
+    if keepdim:
+        stats = stats.unsqueeze(dim=dim)
+    return stats
+
+
 class StatsPool(nn.Module):
 
     def forward(self, x):
         return statistics_pooling(x)
+
+
+class HighOrderStatsPool(nn.Module):
+
+    def forward(self, x):
+        return high_order_statistics_pooling(x)
 
 
 class TimeDelay(nn.Module):
@@ -136,6 +154,94 @@ class DenseTDNNBlock(nn.ModuleList):
         for layer in self:
             x = torch.cat([x, layer(x)], 1)
         return x
+
+
+class StatsSelect(nn.Module):
+
+    def __init__(self, channels, branches, null=False, reduction=1):
+        super(StatsSelect, self).__init__()
+        self.gather = HighOrderStatsPool()
+        self.linear1 = nn.Linear(channels * 4, channels // reduction)
+        self.linear2 = nn.ModuleList()
+        if null:
+            branches += 1
+        for _ in range(branches):
+            self.linear2.append(nn.Linear(channels // reduction, channels))
+        self.channels = channels
+        self.branches = branches
+        self.null = null
+        self.reduction = reduction
+
+    def forward(self, x):
+        f = torch.cat([_x.unsqueeze(dim=1) for _x in x], dim=1)
+        x = torch.sum(f, dim=1)
+        x = self.linear1(self.gather(x))
+        s = []
+        for linear in self.linear2:
+            s.append(linear(x).unsqueeze(dim=1))
+        s = torch.cat(s, dim=1)
+        s = F.softmax(s, dim=1).unsqueeze(dim=-1)
+        if self.null:
+            s = s[:, :-1, :, :]
+        return torch.sum(f * s, dim=1)
+
+    def extra_repr(self):
+        return 'channels={}, branches={}, reduction={}'.format(
+            self.channels, self.branches, self.reduction
+        )
+
+
+class MultiBranchDenseTDNNLayer(DenseTDNNLayer):
+
+    def __init__(self, in_channels, out_channels, bn_channels, kernel_size, stride=1,
+                 dilation=(1,), bias=False, null=False, reduction=1,
+                 config_str='batchnorm-relu', memory_efficient=False):
+        super(DenseTDNNLayer, self).__init__()
+        assert kernel_size % 2 == 1, 'Expect equal paddings, but got even kernel size ({})'.format(kernel_size)
+        padding = (kernel_size - 1) // 2
+        if not isinstance(dilation, (tuple, list)):
+            dilation = (dilation,)
+        self.memory_efficient = memory_efficient
+        self.nonlinear1 = get_nonlinear(config_str, in_channels)
+        self.linear1 = nn.Linear(in_channels, bn_channels, bias=False)
+        self.nonlinear2 = get_nonlinear(config_str, bn_channels)
+        self.linear2 = nn.ModuleList()
+        for _dilation in dilation:
+            self.linear2.append(TimeDelay(bn_channels, out_channels, kernel_size, stride=stride,
+                                          padding=padding * _dilation, dilation=_dilation, bias=bias))
+        self.select = StatsSelect(out_channels, len(dilation), null=null, reduction=reduction)
+
+    def forward(self, x):
+        if self.training and self.memory_efficient:
+            x = cp.checkpoint(self.bn_function, x)
+        else:
+            x = self.bn_function(x)
+        x = self.nonlinear2(x)
+        x = self.select([linear(x) for linear in self.linear2])
+        return x
+
+
+class MultiBranchDenseTDNNBlock(DenseTDNNBlock):
+
+    def __init__(self, num_layers, in_channels, out_channels, bn_channels, kernel_size,
+                 stride=1, dilation=1, bias=False, null=False, reduction=1,
+                 config_str='batchnorm-relu', memory_efficient=False):
+        super(DenseTDNNBlock, self).__init__()
+        for i in range(num_layers):
+            layer = MultiBranchDenseTDNNLayer(
+                in_channels=in_channels + i * out_channels,
+                out_channels=out_channels,
+                bn_channels=bn_channels,
+                kernel_size=kernel_size,
+                stride=stride,
+                dilation=dilation,
+                bias=bias,
+                null=null,
+                reduction=reduction,
+                config_str=config_str,
+                memory_efficient=memory_efficient
+            )
+            self.add_module('tdnnd%d' % (i + 1), layer)
 
 
 class TransitLayer(nn.Module):
