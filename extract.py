@@ -10,10 +10,11 @@ from tqdm import tqdm
 from data import KaldiFeatDataset, Transpose2D
 from model.tdnn import TDNN
 from model.dtdnn import DTDNN
+from model.dtdnnss import DTDNNSS
 
 parser = argparse.ArgumentParser(description='Speaker Verification')
 parser.add_argument('--root', default='data', type=str)
-parser.add_argument('--model', default='D-TDNN', choices=['TDNN', 'D-TDNN'])
+parser.add_argument('--model', default='D-TDNN', choices=['TDNN', 'D-TDNN', 'D-TDNN-SS'])
 parser.add_argument('--checkpoint', default=None, type=str)
 parser.add_argument('--norm', default=False, action='store_true')
 parser.add_argument('--output', default='vectors', type=str)
@@ -27,8 +28,10 @@ def load_model():
     state_dict = torch.load(args.checkpoint)['state_dict']
     if args.model == 'TDNN':
         model = TDNN()
-    else:
+    elif args.model == 'D-TDNN':
         model = DTDNN()
+    else:
+        model = DTDNNSS()
     model.to(device)
     model.load_state_dict(state_dict)
     return model
