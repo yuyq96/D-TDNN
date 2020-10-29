@@ -52,6 +52,7 @@ If you find D-TDNN helps your research, please cite
                Wu-Jun Li},
   title     = {Densely Connected Time Delay Neural Network for Speaker Verification},
   booktitle = {Annual Conference of the International Speech Communication Association (INTERSPEECH)},
+  pages     = {921--925},
   year      = {2020}
 }
 ```
