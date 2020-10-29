@@ -13,7 +13,7 @@ We provide the [pretrained models](https://github.com/yuyq96/D-TDNN/releases/tag
 
 ## Usage
 
-This version (kaldifeat branch) adopts [KaldiFeat](https://github.com/yuyq/kaldifeat) for generating acoustic features on the fly.
+This version (kaldifeat branch) adopts [KaldiFeat](https://github.com/yuyq96/kaldifeat) for generating acoustic features on the fly.
 
 #### Data preparation
 
