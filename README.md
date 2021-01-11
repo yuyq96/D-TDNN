@@ -44,6 +44,12 @@ VoxCeleb1-O
 | D-TDNN-SS | 512 | 3.5 | Softmax | Cosine | 1.41 | 0.19 | 0.24 |
 | D-TDNN-SS | 128 | 3.1 | AAM-Softmax | Cosine | 1.22 | 0.13 | 0.20 |
 
+## Revision of the Paper ⚠️
+
+References:
+
+[16] X. Li, W. Wang, X. Hu, and J. Yang, "Selective Kernel Networks," in IEEE Conference on Computer Vision and Pattern Recognition (CVPR), 2019, pp. 510-519.
+
 ## Citation
 
 If you find D-TDNN helps your research, please cite
