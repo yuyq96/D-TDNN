@@ -2,7 +2,7 @@ from collections import OrderedDict
 
 from torch import nn
 
-from .layers import TDNNLayer, DenseLayer, StatsPool
+from .layers import TDNNLayer, DenseLayer, StatsPool, get_nonlinear
 
 
 class TDNN(nn.Module):
@@ -22,7 +22,7 @@ class TDNN(nn.Module):
             ('stats', StatsPool()),
             ('affine', nn.Linear(3000, embedding_size))
         ]))
-        self.nonlinear = get_nonlinear(config_str, embedding_size, drop_rate)
+        self.nonlinear = get_nonlinear(config_str, embedding_size)
         self.dense = DenseLayer(embedding_size, embedding_size, config_str=config_str)
         if num_classes is not None:
             self.classifier = nn.Linear(embedding_size, num_classes)
