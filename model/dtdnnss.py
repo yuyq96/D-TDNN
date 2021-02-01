@@ -9,7 +9,7 @@ class DTDNNSS(nn.Module):
 
     def __init__(self, feat_dim=30, embedding_size=512, num_classes=None,
                  growth_rate=64, bn_size=2, init_channels=128, null=False, reduction=2,
-                 config_str='batchnorm-relu', memory_efficient=True):
+                 config_str='batchnorm-prelu', memory_efficient=True):
         super(DTDNNSS, self).__init__()
 
         self.xvector = nn.Sequential(OrderedDict([
