@@ -11,6 +11,20 @@ We provide the [pretrained models](https://github.com/yuyq96/D-TDNN/releases/tag
 
 ![D-TDNN & D-TDNN-SS](figure/D_TDNN.png)
 
+### News ⚠️
+
+- [2021-02-01] Our new paper is accepted by ICASSP 2021.
+
+  > Y.-Q. Yu, S. Zheng, H. Suo, Y. Lei, and W.-J. Li, "Focus: Context-Aware Masking for Robust Speaker Verification"
+
+  In our experiments on VoxCeleb, `Focus` can achieve better performance than statistics-and-selection (SS), including speed and accuracy.
+
+### Revision of the Paper ⚠️
+
+References:
+
+> [16] X. Li, W. Wang, X. Hu, and J. Yang, "Selective Kernel Networks," in IEEE Conference on Computer Vision and Pattern Recognition (CVPR), 2019, pp. 510-519.
+
 ## Usage
 
 #### Data preparation
@@ -43,12 +57,6 @@ VoxCeleb1-O
 | D-TDNN-SS (0) | 512 | 3.0 | Softmax | Cosine | 1.55 | 0.20 | 0.30 |
 | D-TDNN-SS | 512 | 3.5 | Softmax | Cosine | 1.41 | 0.19 | 0.24 |
 | D-TDNN-SS | 128 | 3.1 | AAM-Softmax | Cosine | 1.22 | 0.13 | 0.20 |
-
-## Revision of the Paper ⚠️
-
-References:
-
-[16] X. Li, W. Wang, X. Hu, and J. Yang, "Selective Kernel Networks," in IEEE Conference on Computer Vision and Pattern Recognition (CVPR), 2019, pp. 510-519.
 
 ## Citation
 
