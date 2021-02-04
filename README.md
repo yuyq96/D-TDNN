@@ -7,6 +7,7 @@ PyTorch implementation of Densely Connected Time Delay Neural Network (D-TDNN) i
 - [2021-02-04] TDNN in this repo is slower than nn.Conv1d, but we adopted it because:
   - TDNN in this repo was also used in creating F-TDNN models which are not perfectly supported by nn.Conv1d (asymmetric paddings).
   - nn.Conv1d(dilation>1, bias=True) is slow in training.
+
   However, we do not use F-TDNN here and we always set bias=False in D-TDNN. So, we are considering upload a new version of TDNN soon.
 
 - [2021-02-01] Our new paper is accepted by ICASSP 2021.
