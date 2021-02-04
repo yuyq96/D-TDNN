@@ -2,6 +2,21 @@
 
 PyTorch implementation of Densely Connected Time Delay Neural Network (D-TDNN) in our paper ["Densely Connected Time Delay Neural Network for Speaker Verification"](https://www.isca-speech.org/archive/Interspeech_2020/abstracts/1275.html) (INTERSPEECH 2020).
 
+### What's New ⚠️
+
+- [2021-02-04] TDNN in this repo is slower than nn.Conv1d, but we adopted it because:
+  - TDNN in this repo was also used in creating F-TDNN models which are not perfectly supported by nn.Conv1d (asymmetric paddings).
+  - nn.Conv1d(dilation>1, bias=True) is slow in training.
+  However, we do not use F-TDNN here and we always set bias=False in D-TDNN. So, we are considering upload a new version of TDNN soon.
+
+- [2021-02-01] Our new paper is accepted by ICASSP 2021.
+
+  > Y.-Q. Yu, S. Zheng, H. Suo, Y. Lei, and W.-J. Li, "Focus: Context-Aware Masking for Robust Speaker Verification"
+
+  In our experiments on VoxCeleb, `Focus` can achieve better performance than statistics-and-selection (SS), including speed and accuracy.
+
+### Pretrained Models
+
 We provide the [pretrained models](https://github.com/yuyq96/D-TDNN/releases/tag/models) which can be used in many tasks such as:
 
 - Speaker Verification
@@ -10,20 +25,6 @@ We provide the [pretrained models](https://github.com/yuyq96/D-TDNN/releases/tag
 - Voice Conversion
 
 ![D-TDNN & D-TDNN-SS](figure/D_TDNN.png)
-
-### News ⚠️
-
-- [2021-02-01] Our new paper is accepted by ICASSP 2021.
-
-  > Y.-Q. Yu, S. Zheng, H. Suo, Y. Lei, and W.-J. Li, "Focus: Context-Aware Masking for Robust Speaker Verification"
-
-  In our experiments on VoxCeleb, `Focus` can achieve better performance than statistics-and-selection (SS), including speed and accuracy.
-
-### Revision of the Paper ⚠️
-
-References:
-
-> [16] X. Li, W. Wang, X. Hu, and J. Yang, "Selective Kernel Networks," in IEEE Conference on Computer Vision and Pattern Recognition (CVPR), 2019, pp. 510-519.
 
 ## Usage
 
@@ -71,3 +72,9 @@ If you find D-TDNN helps your research, please cite
   year      = {2020}
 }
 ```
+
+### Revision of the Paper ⚠️
+
+References:
+
+> [16] X. Li, W. Wang, X. Hu, and J. Yang, "Selective Kernel Networks," in IEEE Conference on Computer Vision and Pattern Recognition (CVPR), 2019, pp. 510-519.
