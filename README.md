@@ -10,11 +10,11 @@ PyTorch implementation of Densely Connected Time Delay Neural Network (D-TDNN) i
   
   Check this [commit](https://github.com/yuyq96/D-TDNN/commit/cbc4a6425687e31b52b694e14d72d6889e52a95b) for more information. Note the pre-trained models of 'conv' have not been uploaded yet.
 
-- ~~[2021-02-04] TDNN in this repo is slower than nn.Conv1d, but we adopted it because:~~
-  - ~~TDNN in this repo was also used to create F-TDNN models that are not perfectly supported by nn.Conv1d (asymmetric paddings).~~
-  - ~~nn.Conv1d(dilation>1, bias=True) is slow in training.~~
+- [2021-02-04] TDNN (default implementation) in this repo is slower than nn.Conv1d, but we adopted it because:
+  - TDNN in this repo was also used to create F-TDNN models that are not perfectly supported by nn.Conv1d (asymmetric paddings).
+  - nn.Conv1d(dilation>1, bias=True) is slow in training.
 
-  ~~However, we do not use F-TDNN here, and we always set bias=False in D-TDNN. So, we are considering uploading a new version of TDNN soon.~~
+  However, we do not use F-TDNN here, and we always set bias=False in D-TDNN. ~~So, we are considering uploading a new version of TDNN soon (2021-02-14 updated).~~
 
 - [2021-02-01] Our new paper is accepted by ICASSP 2021.
 
