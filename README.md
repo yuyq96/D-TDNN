@@ -18,9 +18,9 @@ PyTorch implementation of Densely Connected Time Delay Neural Network (D-TDNN) i
 
 - [2021-02-01] Our new paper is accepted by ICASSP 2021.
 
-  > Y.-Q. Yu, S. Zheng, H. Suo, Y. Lei, and W.-J. Li, "Focus: Context-Aware Masking for Robust Speaker Verification"
+  > Y.-Q. Yu, S. Zheng, H. Suo, Y. Lei, and W.-J. Li, "CAM: Context-Aware Masking for Robust Speaker Verification"
 
-  In our experiments on VoxCeleb, `Focus` can achieve better performance than statistics-and-selection (SS), including speed and accuracy.
+  `CAM` outperforms statistics-and-selection (SS) in terms of speed and accuracy.
 
 ### Pretrained Models
 
