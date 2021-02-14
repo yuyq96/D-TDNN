@@ -57,21 +57,30 @@ class HighOrderStatsPool(nn.Module):
 
 
 class TimeDelay(nn.Module):
-
+    # We implement time delay neural network in two ways,
+    # including conv (nn.Conv1d) and linear (nn.Linear).
+    # Linear supports different paddings in two sides.
     def __init__(self, in_channels, out_channels, kernel_size,
-                 stride=1, padding=0, dilation=1, bias=True):
+                 stride=1, padding=0, dilation=1, bias=True, impl='linear'):
         super(TimeDelay, self).__init__()
+        if impl not in ['conv', 'linear']:
+            raise ValueError('impl must be conv or linear')
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.kernel_size = _single(kernel_size)
         self.stride = _single(stride)
-        self.padding = _pair(padding)
         self.dilation = _single(dilation)
-        self.weight = nn.Parameter(torch.Tensor(out_channels, in_channels * kernel_size))
+        if impl == 'conv':
+            self.padding = _single(padding)
+            self.weight = nn.Parameter(torch.Tensor(out_channels, in_channels, kernel_size))
+        else:
+            self.padding = _pair(padding)
+            self.weight = nn.Parameter(torch.Tensor(out_channels, in_channels * kernel_size))
         if bias:
             self.bias = nn.Parameter(torch.Tensor(out_channels))
         else:
             self.register_parameter('bias', None)
+        self.impl = impl
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -82,9 +91,12 @@ class TimeDelay(nn.Module):
                 self.bias.normal_(0, std)
 
     def forward(self, x):
-        x = F.pad(x, self.padding).unsqueeze(1)
-        x = F.unfold(x, (self.in_channels,)+self.kernel_size, dilation=(1,)+self.dilation, stride=(1,)+self.stride)
-        return F.linear(x.transpose(1, 2), self.weight, self.bias).transpose(1, 2)
+        if self.impl == 'conv':
+            return F.conv1d(x, self.weight, self.bias, self.stride, self.padding, self.dilation)
+        else:
+            x = F.pad(x, self.padding).unsqueeze(1)
+            x = F.unfold(x, (self.in_channels,)+self.kernel_size, dilation=(1,)+self.dilation, stride=(1,)+self.stride)
+            return F.linear(x.transpose(1, 2), self.weight, self.bias).transpose(1, 2)
 
 
 class TDNNLayer(nn.Module):
