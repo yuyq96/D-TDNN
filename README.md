@@ -4,10 +4,20 @@ PyTorch implementation of Densely Connected Time Delay Neural Network (D-TDNN) i
 
 ### What's New ⚠️
 
+- [2021-07-21] We recommend using [CAM](https://ieeexplore.ieee.org/document/9414704) instead of SS.
+
+  - D-TDNN + CAM (w/o data augmentation, 4M params)
+
+    | | VoxCeleb1-E | VoxCeleb1-H |
+    | - | - | - |
+    | EER | 1.183 | 2.152 |
+    | DCF_0.01 | 0.1257 | 0.1966 |
+    | DCF_0.001 | 0.2405 | 0.3106 |
+
 - [2021-02-14] We add an `impl` option in [TimeDelay](https://github.com/yuyq96/D-TDNN/blob/cbc4a6425687e31b52b694e14d72d6889e52a95b/model/layers.py#L59), now you can choose:
-  - 'conv': implement TDNN by F.conv1d.
+  - 'conv': implement TDNN by F.conv1d (*recommended*, faster, lower memory usage).
   - 'linear': implement TDNN by F.unfold and F.linear.
-  
+
   Check this [commit](https://github.com/yuyq96/D-TDNN/commit/cbc4a6425687e31b52b694e14d72d6889e52a95b) for more information. Note the pre-trained models of 'conv' have not been uploaded yet.
 
 - [2021-02-04] TDNN (default implementation) in this repo is slower than nn.Conv1d, but we adopted it because:
