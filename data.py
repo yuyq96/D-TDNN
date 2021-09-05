@@ -5,7 +5,6 @@ from torch.utils.data import Dataset
 
 
 class KaldiFeatDataset(Dataset):
-
     def __init__(self, root, transform=None, label='utt'):
         super(KaldiFeatDataset, self).__init__()
         self.transform = transform
@@ -42,6 +41,5 @@ class KaldiFeatDataset(Dataset):
 
 
 class Transpose2D(object):
-
     def __call__(self, a):
         return a.transpose((1, 0))

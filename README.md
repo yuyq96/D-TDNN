@@ -2,35 +2,23 @@
 
 PyTorch implementation of Densely Connected Time Delay Neural Network (D-TDNN) in our paper ["Densely Connected Time Delay Neural Network for Speaker Verification"](https://www.isca-speech.org/archive/Interspeech_2020/abstracts/1275.html) (INTERSPEECH 2020).
 
-### What's New ⚠️
+### News
 
-- [2021-07-21] We recommend using [CAM](https://ieeexplore.ieee.org/document/9414704) instead of SS.
+- [2021-09-05] TimeDelay is replaced by Conv1d by default, since convolution is better optimized in all kinds of deep learning frameworks (Note: The pretrained models are directly converted from the old ones so that the results might be slightly different from those in the paper).
 
-  - D-TDNN + CAM (w/o data augmentation, 4M params)
+- [2021-02-01] The following paper is accepted by ICASSP 2021.
+
+  > Y.-Q. Yu, S. Zheng, H. Suo, Y. Lei, and W.-J. Li, "CAM: Context-Aware Masking for Robust Speaker Verification"
+
+  `CAM` outperforms statistics-and-selection (SS) in terms of speed and accuracy.
+
+  - D-TDNN + [CAM](https://ieeexplore.ieee.org/document/9414704) (w/o data augmentation, 4M params)
 
     | | VoxCeleb1-E | VoxCeleb1-H |
     | - | - | - |
     | EER | 1.183 | 2.152 |
     | DCF_0.01 | 0.1257 | 0.1966 |
     | DCF_0.001 | 0.2405 | 0.3106 |
-
-- [2021-02-14] We add an `impl` option in [TimeDelay](https://github.com/yuyq96/D-TDNN/blob/cbc4a6425687e31b52b694e14d72d6889e52a95b/model/layers.py#L59), now you can choose:
-  - 'conv': implement TDNN by F.conv1d (*recommended*, faster, lower memory usage).
-  - 'linear': implement TDNN by F.unfold and F.linear.
-
-  Check this [commit](https://github.com/yuyq96/D-TDNN/commit/cbc4a6425687e31b52b694e14d72d6889e52a95b) for more information. Note the pre-trained models of 'conv' have not been uploaded yet.
-
-- [2021-02-04] TDNN (default implementation) in this repo is slower than nn.Conv1d, but we adopted it because:
-  - TDNN in this repo was also used to create F-TDNN models that are not perfectly supported by nn.Conv1d (asymmetric paddings).
-  - nn.Conv1d(dilation>1, bias=True) is slow in training.
-
-  However, we do not use F-TDNN here, and we always set bias=False in D-TDNN. ~~So, we are considering uploading a new version of TDNN soon (2021-02-14 updated).~~
-
-- [2021-02-01] Our new paper is accepted by ICASSP 2021.
-
-  > Y.-Q. Yu, S. Zheng, H. Suo, Y. Lei, and W.-J. Li, "CAM: Context-Aware Masking for Robust Speaker Verification"
-
-  `CAM` outperforms statistics-and-selection (SS) in terms of speed and accuracy.
 
 ### Pretrained Models
 
@@ -90,7 +78,7 @@ If you find D-TDNN helps your research, please cite
 }
 ```
 
-### Revision of the Paper ⚠️
+### Revision of the Paper
 
 References:
 

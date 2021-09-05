@@ -43,4 +43,4 @@ def compute_c_norm(fnr, fpr, p_target, c_miss=1, c_fa=1):
     dcf = c_miss * fnr * p_target + c_fa * fpr * (1 - p_target)
     c_det = np.min(dcf)
     c_def = min(c_miss * p_target, c_fa * (1 - p_target))
-    return c_det/c_def
+    return c_det / c_def

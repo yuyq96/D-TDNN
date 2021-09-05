@@ -8,25 +8,30 @@ from torch.utils.data import DataLoader
 from tqdm import tqdm
 
 from data import KaldiFeatDataset, Transpose2D
-from metric import compute_fnr_fpr, compute_eer, compute_c_norm
-from model.tdnn import TDNN
+from metric import compute_c_norm, compute_eer, compute_fnr_fpr
 from model.dtdnn import DTDNN
 from model.dtdnnss import DTDNNSS
+from model.tdnn import TDNN
 
 parser = argparse.ArgumentParser(description='Speaker Verification')
 parser.add_argument('--root', default='data', type=str)
-parser.add_argument('--model', default='D-TDNN', choices=['TDNN', 'D-TDNN', 'D-TDNN-SS'])
+parser.add_argument('--model',
+                    default='D-TDNN',
+                    choices=['TDNN', 'D-TDNN', 'D-TDNN-SS'])
 parser.add_argument('--checkpoint', default=None, type=str)
-parser.add_argument('--device', default="cpu", choices=['cpu', 'cuda'])
+parser.add_argument('--device', default="cuda", choices=['cpu', 'cuda'])
 parser.add_argument('--pin-memory', default=True, type=bool)
 
 
 def load_model():
-    assert os.path.isfile(args.checkpoint), "No checkpoint found at '{}'".format(args.checkpoint)
+    assert os.path.isfile(
+        args.checkpoint), "No checkpoint found at '{}'".format(args.checkpoint)
     print('Loading checkpoint {}'.format(args.checkpoint))
     state_dict = torch.load(args.checkpoint)['state_dict']
     if args.model == 'TDNN':
         model = TDNN()
+        del model.nonlinear
+        del model.dense
     elif args.model == 'D-TDNN':
         model = DTDNN()
     else:
@@ -42,7 +47,11 @@ def evaluate():
 
     transform = Transpose2D()
     dataset = KaldiFeatDataset(root=args.root, transform=transform)
-    loader = DataLoader(dataset, batch_size=1, shuffle=False, num_workers=1, pin_memory=args.pin_memory)
+    loader = DataLoader(dataset,
+                        batch_size=1,
+                        shuffle=False,
+                        num_workers=1,
+                        pin_memory=args.pin_memory)
 
     utt2emb = {}
     for data, utt in tqdm(loader):
@@ -64,9 +73,12 @@ def evaluate():
         labels = np.array(labels)
         fnr, fpr = compute_fnr_fpr(scores, labels)
         eer, th = compute_eer(fnr, fpr, True, scores)
-        print('Equal error rate is {:6f}%, at threshold {:6f}'.format(eer * 100, th))
-        print('Minimum detection cost (0.01) is {:6f}'.format(compute_c_norm(fnr, fpr, 0.01)))
-        print('Minimum detection cost (0.001) is {:6f}'.format(compute_c_norm(fnr, fpr, 0.001)))
+        print('Equal error rate is {:6f}%, at threshold {:6f}'.format(
+            eer * 100, th))
+        print('Minimum detection cost (0.01) is {:6f}'.format(
+            compute_c_norm(fnr, fpr, 0.01)))
+        print('Minimum detection cost (0.001) is {:6f}'.format(
+            compute_c_norm(fnr, fpr, 0.001)))
 
 
 if __name__ == '__main__':
