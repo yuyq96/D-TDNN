@@ -6,13 +6,13 @@ PyTorch implementation of Densely Connected Time Delay Neural Network (D-TDNN) i
 
 - [2021-09-05] TimeDelay is replaced by Conv1d by default, since convolution is better optimized in all kinds of deep learning frameworks (Note: The pretrained models are directly converted from the old ones so that the results might be slightly different from those in the paper).
 
-- [2021-02-01] The following paper is accepted by ICASSP 2021.
+- [2021-08-28] D-TDNN and D-TDNN-SS outperform SOTA system on the AP20-OLR-dialect-task of oriental language recognition (OLR) challenge 2020 ([WeChat artical](https://mp.weixin.qq.com/s/sr2ZBFj9njt47tlNNi8dNw) / [paper](https://arxiv.org/abs/2108.07787)), showing their potential on other speech processing tasks.
+
+- [2021-02-01] The following [paper](https://ieeexplore.ieee.org/document/9414704) is accepted by ICASSP 2021.
 
   > Y.-Q. Yu, S. Zheng, H. Suo, Y. Lei, and W.-J. Li, "CAM: Context-Aware Masking for Robust Speaker Verification"
 
-  `CAM` outperforms statistics-and-selection (SS) in terms of speed and accuracy.
-
-  - D-TDNN + [CAM](https://ieeexplore.ieee.org/document/9414704) (w/o data augmentation, 4M params)
+  - D-TDNN + CAM (w/o data augmentation, 4M params)
 
     | | VoxCeleb1-E | VoxCeleb1-H |
     | - | - | - |
