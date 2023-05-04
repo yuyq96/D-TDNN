@@ -4,21 +4,30 @@ PyTorch implementation of Densely Connected Time Delay Neural Network (D-TDNN) i
 
 ### News
 
+- [2023-05-04] [3D-Speaker](https://github.com/alibaba-damo-academy/3D-Speaker) supports training of CAM++ model and can be easily extended to support training of raw D-TDNN and CAM models. They also released a [Chinese speaker embedding model](https://modelscope.cn/models/damo/speech_campplus_sv_zh-cn_16k-common/summary) trained on 200k speakers and an [English speaker embedding model](https://modelscope.cn/models/damo/speech_campplus_sv_en_voxceleb_16k/summary) trained on VoxCeleb.
+
+- [2023-03-04] [CAM++](https://arxiv.org/abs/2303.00332) achieved superior performance with lower computational complexity and faster inference speed than popular ECAPA-TDNN and ResNet34 systems.
+
+  > H. Wang, S. Zheng, Y. Chen, L. Cheng, and Q. Chen, "CAM++: A Fast and Efficient Network for Speaker Verification Using Context-Aware Masking"
+
+  | | VoxCeleb1-E | VoxCeleb1-H | CN-Celeb |
+  | - | - | - | - |
+  | ECAPA-TDNN | 1.07/0.1185 | 1.98/0.1956 | 7.45/0.4127 |
+  | D-TDNN | 1.63/0.1748 | 2.86/0.2571 | 8.41/0.4683 |
+  | CAM | 1.18/0.1257* | 2.15/0.1966* | - |
+  | CAM++ | **0.89/0.0995** | **1.76/0.1729** | **6.78/0.3830** |
+
 - [2021-09-05] TimeDelay is replaced by Conv1d by default, since convolution is better optimized in all kinds of deep learning frameworks (Note: The pretrained models are directly converted from the old ones so that the results might be slightly different from those in the paper).
 
 - [2021-08-28] D-TDNN and D-TDNN-SS outperform SOTA system on the AP20-OLR-dialect-task of oriental language recognition (OLR) challenge 2020 ([WeChat artical](https://mp.weixin.qq.com/s/sr2ZBFj9njt47tlNNi8dNw) / [paper](https://arxiv.org/abs/2108.07787)), showing their potential on other speech processing tasks.
 
-- [2021-02-01] The following [paper](https://ieeexplore.ieee.org/document/9414704) is accepted by ICASSP 2021.
+- [2021-02-01] [CAM](https://ieeexplore.ieee.org/document/9414704) adopts D-TDNN backbone and is enhanced by context-aware masking.
 
-  > Y.-Q. Yu, S. Zheng, H. Suo, Y. Lei, and W.-J. Li, "CAM: Context-Aware Masking for Robust Speaker Verification"
+  > Y.-Q. Yu, S. Zheng, H. Suo, Y. Lei, and W.-J. Li, "CAM: Context-Aware Masking for Robust Speaker Verification" (ICASSP 2021)
 
-  - D-TDNN + CAM (w/o data augmentation, 4M params)
-
-    | | VoxCeleb1-E | VoxCeleb1-H |
-    | - | - | - |
-    | EER | 1.183 | 2.152 |
-    | DCF_0.01 | 0.1257 | 0.1966 |
-    | DCF_0.001 | 0.2405 | 0.3106 |
+  | | VoxCeleb1-E | VoxCeleb1-H |
+  | - | - | - |
+  | CAM | 1.18/0.1257 | 2.15/0.1966 |
 
 ### Pretrained Models
 
